@@ -1,0 +1,20 @@
+library(readr)
+ujiku <- read_delim("sayuktab.csv", ";", escape_double = FALSE, 
+                    trim_ws = TRUE)
+View(ujiku)
+library(arules)
+library(arulesViz)
+qq<-as.matrix(ujiku)
+qq<-as(qq,"transactions")
+#rules1<-apriori(qq,parameter = list(supp=0.0015,conf=0.7,minlen=2,maxlen=3),appearance = list(rhs="Kerang_ijo"))
+rules1<-apriori(qq,parameter = list(supp=0.0015,conf=0.7,minlen=2,maxlen=3))
+rules1<-sort(rules1,by="conf",decreasing = TRUE)
+quality(rules1)$improvement<-interestMeasure(rules1, measure = "improvement")
+quality(rules1)<-round(quality(rules1),digits = 3)
+inspect(rules1)
+is.redundant(rules1)
+inspect(rules1[is.redundant(rules1)])
+inspect(rules1[!is.redundant(rules1)])
+plot(rules1, method = "graph",engine = "htmlwidget")
+
+
